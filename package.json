@@ -1,0 +1,48 @@
+{
+  "name": "my-react-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "tailwind:watch": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch",
+    "dev:watch": "npx retool-ccl dev"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.6",
+    "@tryretool/custom-component-support": "latest",
+    "html2pdf.js": "^0.9.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^4.0.6"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.55",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "postcss-modules": "^6.0.0",
+    "prettier": "^3.0.3"
+  },
+  "retoolCustomComponentLibraryConfig": {
+    "name": "LCR",
+    "label": "LCR",
+    "description": "",
+    "entryPoint": "src/index.tsx",
+    "outputPath": "dist"
+  }
+}
