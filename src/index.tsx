@@ -1,35 +1,23 @@
 import React, { useEffect, useState } from 'react'
 
+import './input.css'
+import './output.css'
+
 import html2pdf from 'html2pdf.js'
 
 import { Retool } from '@tryretool/custom-component-support'
 
 export const PdfConverter = () => {
   const [isGenerating, setIsGenerating] = useState(false)
-  const [htmlContent, _setHtmlContent] = Retool.useStateString({
-    name: 'htmlContent',
-    label: 'HTML',
-    initialValue: '<p>hello world</p>'
-  })
-  const [cssContent, _setCssContent] = Retool.useStateString({
-    name: 'cssContent',
-    label: 'CSS',
-    initialValue: ''
-  })
-  const [margins, _setMargins] = Retool.useStateString({
-    name: 'margins',
-    label: 'Margin',
-    initialValue: '15 15 15 15'
+  const [data] = Retool.useStateObject({
+    name: 'data',
+    label: 'Data',
+    initialValue: {}
   })
   const [fileName, _setFileName] = Retool.useStateString({
     name: 'fileName',
     label: 'File Name',
     initialValue: 'pdfdocument'
-  })
-  const [orientation, _setOrientation] = Retool.useStateString({
-    name: 'orientation',
-    label: 'Orientation',
-    initialValue: 'portrait'
   })
 
   const [isDisabled, _setIsDisabled] = Retool.useStateBoolean({
@@ -90,14 +78,14 @@ export const PdfConverter = () => {
       container.className = 'pdf-container'
 
       // Process HTML content to wrap sections in page-wrapper
-      const processedHtml = processHtmlContent(htmlContent)
+      const processedHtml = processHtmlContent('<p>Hello world</p>')
       container.innerHTML = processedHtml
 
       // Add the combined CSS
       const styleElement = document.createElement('style')
       styleElement.textContent = `
       /* Additional print-specific styles */
-      ${cssContent}
+
       `
 
       container.prepend(styleElement)
@@ -114,7 +102,7 @@ export const PdfConverter = () => {
         jsPDF: {
           unit: 'mm',
           format: 'A4',
-          orientation: orientation,
+          orientation: 'portrait',
           compress: true
         },
         pagebreak: {
@@ -181,7 +169,7 @@ export const PdfConverter = () => {
 
   return (
     <button
-      className={` ${isDisabled || isGenerating ? 'export-btn-disabled' : 'export-btn'} w-full text-[12px] text-slate-100 font-bold h-[32px] rounded-[5px] ${isDisabled || isGenerating ? 'bg-[#58b63b] cursor-not-allowed' : 'bg-[#174773] hover:bg-blue-950 '}  overflow-hidden`}
+      className={` ${isDisabled || isGenerating ? 'export-btn-disabled' : 'export-btn'} w-full text-[12px] text-[#fff] font-bold h-[32px] rounded-[5px] ${isDisabled || isGenerating ? 'bg-[#58b63b] cursor-not-allowed' : 'bg-[#174773] hover:bg-blue-950 '}  overflow-hidden`}
       onClick={generatePdf}
       disabled={isGenerating || isDisabled}
     >
