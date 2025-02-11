@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Inter';
+            box-sizing: border-box;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 50px;
+        }
+
+        h1 {
+            color: #222;
+            font-size: 28px;
+        }
+
+        .row-info {
+            margin-top: 30px;
+            width: auto;
+            font-size: 14px;
+            display: grid;
+            grid-template-columns: 150px 200px;
+            grid-template-rows: repeat(3, 1fr);
+            row-gap: 3px;
+        }
+
+        .invoice-number {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .date-info {
+            color: #333;
+        }
+
+        .block-info {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .block-info>div {
+            max-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .block-info-title {
+            font-weight: 600;
+        }
+
+        .block-info-description {
+            color: #555;
+        }
+
+        .price-info {
+            margin-top: 30px;
+            font-weight: 600;
+            font-size: 22px;
+        }
+
+        .pay-online {
+            display: block;
+            margin-top: 10px;
+        }
+
+        .product-table {
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .product-table th {
+            color: #666 !important;
+            font-weight: 400;
+            border-bottom: 2px solid #333;
+            font-size: 12px;
+        }
+
+        .product-table th,
+        td {
+            padding: 6px 0;
+        }
+
+        .product-table tr {
+            display: flex;
+        }
+
+        .description {
+            text-align: left;
+            flex: 1 1 0%;
+        }
+
+        .qty {
+            width: 70px;
+            text-align: right;
+            padding-right: 20px !important;
+        }
+
+        .unit-price {
+            width: 100px;
+            text-align: left;
+        }
+
+        .amount {
+            width: 100px;
+            text-align: right;
+        }
+
+        .summary {
+            margin-top: 20px;
+            margin-left: auto;
+            width: 400px;
+        }
+
+        .summary-row {
+            border-top: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .amount-due {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .notes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notes>p:nth-child(1) {
+            font-weight: 600;
+        }
+
+        .notes>p:nth-child(2) {
+            line-height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Invoice</h1>
+        <div class=" row-info">
+            <p class="invoice-number">Invoice number</p>
+            <p class="invoice-number">234324</p>
+            <p class="date-info">Date of issue</p>
+            <p class="date-info">4234324</p>
+            <p class="date-info">Date due</p>
+            <p class="date-info">4234234</p>
+        </div>
+        <div class=" block-info">
+            <div>
+                <p class=" block-info-title">SUBNET LABS LLP</p>
+                <p class=" block-info-description">fasdf</p>
+                <p class=" block-info-description">fasdf</p>
+            </div>
+            <div>
+                <p class=" block-info-title">Bill to</p>
+                <p class=" block-info-description">fasd</p>
+                <p class=" block-info-description">fadsf</p>
+                <p class=" block-info-description">fads</p>
+                <p class=" block-info-description">fadsf</p>
+            </div>
+            <div>
+                <p class=" block-info-title">Ship to</p>
+                <p class=" block-info-description">fasdf</p>
+                <p class=" block-info-description">fasdf</p>
+                <p class=" block-info-description">fadsfasf</p>
+            </div>
+        </div>
+        <p class="price-info">$2,500.00 USD due February 1, 2025</p>
+        <a href="#" class="pay-online">Pay online</a>
+        <table class="product-table">
+            <thead>
+                <th class="description">Description</th>
+                <th class="qty">Qty</th>
+                <th class="unit-price">Unit price</th>
+                <th class="amount">Amount</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="description">Description</td>
+                    <td class="qty">Qty</td>
+                    <td class="unit-price">Unit price</td>
+                    <td class="amount">Amount</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="summary">
+            <div class="summary-row">
+                <p>Subtotal</p>
+                <p>%2,500.00</p>
+            </div>
+            <div class="summary-row">
+                <p>Total</p>
+                <p>%2,500.00</p>
+            </div>
+            <div class="summary-row amount-due">
+                <p>Amount due</p>
+                <p>%2,500.00</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
