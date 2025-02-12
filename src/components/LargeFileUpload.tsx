@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 
 const UPLOAD_URL = 'https://uploadfile-deigzpgzma-uc.a.run.app/upload'
+const GET_SIGNED_URL =
+  'https://uploadfile-deigzpgzma-uc.a.run.app/get-signed-url'
 // const UPLOAD_URL = 'https://netpartnerservices.retool.com/url/test'
 
 // Function to read first N lines of a CSV file
@@ -76,27 +78,51 @@ export default function LargeFileUploadComponent() {
       alert('Please select a file first!')
       return
     }
+    const response = await fetch(`${GET_SIGNED_URL}?fileName=${file.name}`)
+    console.log({ response })
+    const { url } = await response.json()
 
-    const data = await readCSVPreview(file, 100)
-    console.log({ data })
+    const formData = new FormData();
+    formData.append('file', file);
 
-    const formData = new FormData()
-    formData.append('file', file)
+    // Step 2: Upload the file directly to Google Cloud Storage
+    const uploadResponse = await fetch(url, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': 'application/octet-stream' }
+      // mode: 'no-cors'
+    })
 
-    try {
-      const response = await fetch(UPLOAD_URL, {
-        method: 'POST',
-        body: formData
-      })
-
-      if (response.ok) {
-        alert('File uploaded successfully!')
-      } else {
-        alert('File upload failed!')
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error)
+    if (uploadResponse.ok) {
+      console.log('Upload successful!')
+    } else {
+      console.error('Upload failed')
     }
+    // if (!file) {
+    //   alert('Please select a file first!')
+    //   return
+    // }
+
+    // const data = await readCSVPreview(file, 100)
+    // console.log({ data })
+
+    // const formData = new FormData()
+    // formData.append('file', file)
+
+    // try {
+    //   const response = await fetch(UPLOAD_URL, {
+    //     method: 'POST',
+    //     body: formData
+    //   })
+
+    //   if (response.ok) {
+    //     alert('File uploaded successfully!')
+    //   } else {
+    //     alert('File upload failed!')
+    //   }
+    // } catch (error) {
+    //   console.error('Error uploading file:', error)
+    // }
   }
 
   return (
