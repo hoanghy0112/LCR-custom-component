@@ -88,21 +88,22 @@ export const PdfConverter = () => {
         <div class=" row-info">
             <p class="invoice-number">Invoice number</p>
             <p class="invoice-number">${data.invoiceId}</p>
-            <p class="date-info">Issue date</p>
-            <p class="date-info">${data.issueDate}</p>
-            <p class="date-info">Invoice date</p>
+            <p class="date-info">Date Due</p>
             <p class="date-info">${data.invoiceDate}</p>
         </div>
         <div class=" block-info">
             <div>
-                <p class=" block-info-title">Client</p>
+                <p class=" block-info-title">Company</p>
                 <p class=" block-info-description">${data.clientName}</p>
-                <p class=" block-info-description">${data.ip}</p>
+                ${data.card ? `<p class=" block-info-description">Last 4 - ${data.card}</p>` : ''}
+                ${data.ip ? `<p class=" block-info-description">IP: ${data.ip}</p>` : ''}
+                ${data.tracking ? `<p class=" block-info-description">Tracking #: ${data.tracking}</p>` : ''}
             </div>
             <div>
                 <p class=" block-info-title">Bill to</p>
                 <p class=" block-info-description">${data.customerName}</p>
                 <p class=" block-info-description">${data.address}</p>
+                <p class=" block-info-description">${data.city}</p>
                 ${data.phone ? `<p class=" block-info-description">${data.phone}</p>` : ''}
                 ${data.email ? `<p class=" block-info-description">${data.email}</p>` : ''}
             </div>
@@ -140,24 +141,26 @@ export const PdfConverter = () => {
                 <p>${data.total}</p>
             </div>
         </div>
-        ${
-          data.productTerm
-            ? `
-          <div class="notes">
-              <p>Product Terms and Conditions</p>
-              <p>${data.productTerm}</p>
-          </div>`
-            : ''
-        }
-        ${
-          data.additionalNotes
-            ? `
-          <div class="notes">
-              <p>Additional notes</p>
-              <p>${data.additionalNotes}</p>
-          </div>`
-            : ''
-        }
+        <div>
+            ${
+              data.productTerm
+                ? `
+              <div class="notes">
+                  <p>Product Terms and Conditions</p>
+                  <p>${data.productTerm}</p>
+              </div>`
+                : ''
+            }
+            ${
+              data.additionalNotes
+                ? `
+              <div class="notes additional-notes">
+                  <p>Additional notes</p>
+                  <p>${data.additionalNotes}</p>
+              </div>`
+                : ''
+            }
+        </div>
     </div>`)
       container.innerHTML = processedHtml
 
@@ -177,7 +180,7 @@ export const PdfConverter = () => {
 
         .container {
             padding: 50px;
-            padding-top: 30px !important;
+            padding-top: 10px !important;
             padding-bottom: 0 !important;
         }
 
@@ -209,18 +212,18 @@ export const PdfConverter = () => {
             margin-top: 30px;
             display: flex;
             justify-content: space-between;
-            padding-right: 50px;
+            padding-right: 80px;
         }
 
         .block-info>div {
-            width: 200px;
+            width: 230px;
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
         .block-info>div:nth-child(1) {
-            width: 260px;
+            width: 320px;
         }
 
         .block-info-title {
@@ -315,19 +318,25 @@ export const PdfConverter = () => {
             margin-top: 30px;
         }
 
+        .additional-notes {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
         .notes>p:nth-child(1) {
             font-weight: 600;
         }
 
         .notes>p:nth-child(2) {
             line-height: 20px;
+            white-space: pre-wrap;
         }
       `
 
       container.prepend(styleElement)
 
       const options = {
-        margin: [0, 0, 2, 0],
+        margin: [12, 0, 12, 0],
         filename: fileName,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
