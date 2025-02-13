@@ -9,7 +9,22 @@ import { Retool } from '@tryretool/custom-component-support'
 import LargeFileUploadComponent from './components/LargeFileUpload'
 
 export const LargeFileUpload = () => {
-  return <LargeFileUploadComponent />
+  const [previewData, setData] = Retool.useStateObject({
+    name: 'previewData',
+    inspector: 'hidden',
+    initialValue: {}
+  })
+
+  const onUpload = Retool.useEventCallback({ name: 'onUpload' })
+
+  return (
+    <LargeFileUploadComponent
+      setData={(d) => {
+        setData(d)
+        onUpload()
+      }}
+    />
+  )
 }
 
 export const PdfConverter = () => {

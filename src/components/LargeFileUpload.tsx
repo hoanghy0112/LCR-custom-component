@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react'
 
 const UPLOAD_URL = 'https://uploadfile-deigzpgzma-uc.a.run.app/upload'
@@ -57,9 +58,10 @@ async function readCSVPreview(file, numLines = 100) {
     // Parse data rows
     const data = lines.map((line) => {
       const values = line.split(',').map((v) => v.trim())
-      return Object.fromEntries(headers.map((h, i) => [h, values[i]]))
+      return Object.fromEntries(headers.filter(h => h).map((h, i) => [h.replaceAll('"', ''), values[i]]))
     })
 
+    console.log({ data })
     return {
       headers,
       data,
@@ -80,7 +82,11 @@ function formatFileSize(bytes, decimals = 2) {
   return `${(bytes / Math.pow(k, i)).toFixed(decimals)} ${sizes[i]}`
 }
 
-export default function LargeFileUploadComponent() {
+export default function LargeFileUploadComponent({
+  setData
+}: {
+  setData: any
+}) {
   const [file, setFile] = useState<File>()
   const [isUploading, setIsUploading] = useState(false)
 
@@ -111,7 +117,13 @@ export default function LargeFileUploadComponent() {
 
   return (
     <div>
-      <input type="file" onChange={(e) => setFile(e.target.files?.[0])} />
+      <input
+        type="file"
+        onChange={async (e) => {
+          setFile(e.target.files?.[0])
+          setData(await readCSVPreview(e.target.files?.[0], 50))
+        }}
+      />
       <button onClick={handleUpload}>Upload</button>
 
       {isUploading ? <p>Uploading...</p> : null}
