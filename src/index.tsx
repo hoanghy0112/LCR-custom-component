@@ -14,15 +14,38 @@ export const LargeFileUpload = () => {
     inspector: 'hidden',
     initialValue: {}
   })
+  const [name, setName] = Retool.useStateString({
+    name: 'fileName',
+    inspector: 'hidden'
+  })
+  const [uploadedFileName, setUploadedFileName] = Retool.useStateString({
+    name: 'uploadedFileName'
+  })
+  const [uploadingFiles, setUploadingFiles] = Retool.useStateArray({
+    name: 'uploadFiles',
+    initialValue: []
+  })
 
   const onUpload = Retool.useEventCallback({ name: 'onUpload' })
+  const onSubmit = Retool.useEventCallback({ name: 'onSubmit' })
+  const onFileStatusChanged = Retool.useEventCallback({ name: 'onFileStatusChanged' })
+
+  useEffect(() => {
+    onUpload()
+  }, [name])
 
   return (
     <LargeFileUploadComponent
+      uploadedFileName={uploadedFileName}
+      fileName={name}
+      onSubmit={onSubmit}
+      onFileStatusChanged={onFileStatusChanged}
       setData={(d) => {
         setData(d)
-        onUpload()
       }}
+      uploadingFiles={uploadingFiles}
+      setUploadingFiles={setUploadingFiles}
+      setFileName={setName}
     />
   )
 }

@@ -1,3 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.upload-wrapper {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+.upload-text {
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  text-align: center;
+}
+
+.upload-btn {
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  display: flex;
+  margin: 0 auto;
+  margin-top: 30px !important;
+  height: auto;
+  align-items: center;
+  gap: 8px;
+  background-color: #3170f9; /* Blue-600 */
+  color: white;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.upload-btn:hover {
+  background-color: #0750f0; /* Blue-700 */
+}
+
+.upload-btn:active {
+  background-color: #0640be; /* Blue-800 */
+}
