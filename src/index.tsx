@@ -35,7 +35,6 @@ export const PdfConverter = () => {
     // Add page break styles
     const pageBreakStyles = `
       .page-wrapper {
-        margin-bottom: 20mm;
         page-break-inside: avoid;
         page-break-after: auto;
       }
@@ -315,7 +314,7 @@ export const PdfConverter = () => {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         .additional-notes {
@@ -336,7 +335,7 @@ export const PdfConverter = () => {
       container.prepend(styleElement)
 
       const options = {
-        margin: [12, 0, 12, 0],
+        margin: [10, 0, 12, 0],
         filename: fileName,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {

@@ -70,27 +70,34 @@ async function readCSVPreview(file, numLines = 100) {
   }
 }
 
+function formatFileSize(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes'
+
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return `${(bytes / Math.pow(k, i)).toFixed(decimals)} ${sizes[i]}`
+}
+
 export default function LargeFileUploadComponent() {
   const [file, setFile] = useState<File>()
+  const [isUploading, setIsUploading] = useState(false)
 
   const handleUpload = async () => {
     if (!file) {
       alert('Please select a file first!')
       return
     }
+    setIsUploading(true)
+
     const response = await fetch(`${GET_SIGNED_URL}?fileName=${file.name}`)
-    console.log({ response })
     const { url } = await response.json()
 
-    const formData = new FormData();
-    formData.append('file', file);
-
-    // Step 2: Upload the file directly to Google Cloud Storage
     const uploadResponse = await fetch(url, {
       method: 'PUT',
       body: file,
       headers: { 'Content-Type': 'application/octet-stream' }
-      // mode: 'no-cors'
     })
 
     if (uploadResponse.ok) {
@@ -98,37 +105,16 @@ export default function LargeFileUploadComponent() {
     } else {
       console.error('Upload failed')
     }
-    // if (!file) {
-    //   alert('Please select a file first!')
-    //   return
-    // }
 
-    // const data = await readCSVPreview(file, 100)
-    // console.log({ data })
-
-    // const formData = new FormData()
-    // formData.append('file', file)
-
-    // try {
-    //   const response = await fetch(UPLOAD_URL, {
-    //     method: 'POST',
-    //     body: formData
-    //   })
-
-    //   if (response.ok) {
-    //     alert('File uploaded successfully!')
-    //   } else {
-    //     alert('File upload failed!')
-    //   }
-    // } catch (error) {
-    //   console.error('Error uploading file:', error)
-    // }
+    setIsUploading(false)
   }
 
   return (
     <div>
       <input type="file" onChange={(e) => setFile(e.target.files?.[0])} />
       <button onClick={handleUpload}>Upload</button>
+
+      {isUploading ? <p>Uploading...</p> : null}
     </div>
   )
 }
