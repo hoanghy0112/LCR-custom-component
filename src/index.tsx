@@ -26,6 +26,10 @@ export const LargeFileUpload = () => {
     initialValue: []
   })
 
+  const [uploadData, setUploadData] = Retool.useStateObject({
+    name: 'Upload data'
+  })
+
   const onUpload = Retool.useEventCallback({ name: 'onUpload' })
   const onSubmit = Retool.useEventCallback({ name: 'onSubmit' })
   const onFileStatusChanged = Retool.useEventCallback({ name: 'onFileStatusChanged' })
@@ -38,6 +42,7 @@ export const LargeFileUpload = () => {
     <LargeFileUploadComponent
       uploadedFileName={uploadedFileName}
       fileName={name}
+      uploadData={uploadData}
       onSubmit={onSubmit}
       onFileStatusChanged={onFileStatusChanged}
       setData={(d) => {

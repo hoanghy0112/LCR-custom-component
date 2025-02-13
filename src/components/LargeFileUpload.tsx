@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react'
 
-const UPLOAD_URL = 'https://uploadfile-deigzpgzma-uc.a.run.app/upload'
+const UPLOAD_URL = 'https://uploadfile-deigzpgzma-uc.a.run.app/save-to-db'
 const GET_SIGNED_URL =
   'https://uploadfile-deigzpgzma-uc.a.run.app/get-signed-url'
 // const UPLOAD_URL = 'https://netpartnerservices.retool.com/url/test'
@@ -53,7 +53,9 @@ async function readCSVPreview(file, numLines = 100) {
     }
 
     // Parse header into columns
-    const headers = headerRow.split(',').map((h) => h.trim())
+    const headers = headerRow
+      .split(',')
+      .map((h) => h.trim().replaceAll('"', ''))
 
     // Parse data rows
     const data = lines.map((line) => {
@@ -94,7 +96,8 @@ export default function LargeFileUploadComponent({
   onSubmit,
   onFileStatusChanged,
   uploadingFiles,
-  setUploadingFiles
+  setUploadingFiles,
+  uploadData
 }: {
   fileName: string
   setData: any
@@ -104,6 +107,7 @@ export default function LargeFileUploadComponent({
   onFileStatusChanged: any
   uploadingFiles: any[]
   setUploadingFiles: any
+  uploadData: any
 }) {
   const [file, setFile] = useState<File>()
   const [isUploading, setIsUploading] = useState(false)
@@ -123,28 +127,36 @@ export default function LargeFileUploadComponent({
     }
     setIsUploading(true)
 
+    const response = await fetch(`${GET_SIGNED_URL}?fileName=${file.name}`)
+    const { url, fileName } = await response.json()
+
+    const uploadedFile = new File([file], fileName, {
+      type: file.type,
+      lastModified: file.lastModified
+    })
+    const originalFileName = file.name
+
     const currentFileName = uploadedFileName
     const timestamp = new Date()
+
+    onSubmit()
+    setData({})
+    setFileName('')
+    if (inputRef.current) inputRef.current.value = ''
 
     _setUploadingFiles((prev: any) => [
       ...prev.filter((d: any) => d.fileName !== currentFileName),
       {
         fileName: currentFileName,
-        originalFileName: file.name,
+        originalFileName,
         timestamp,
         status: 'uploading'
       }
     ])
 
-    const response = await fetch(`${GET_SIGNED_URL}?fileName=${file.name}`)
-    const { url, fileName } = await response.json()
-
     const uploadResponse = await fetch(url, {
       method: 'PUT',
-      body: new File([file], fileName, {
-        type: file.type,
-        lastModified: file.lastModified
-      }),
+      body: uploadedFile,
       headers: { 'Content-Type': 'application/octet-stream' }
     })
 
@@ -157,12 +169,26 @@ export default function LargeFileUploadComponent({
       ...prev.filter((d: any) => d.fileName !== currentFileName),
       {
         fileName: currentFileName,
-        originalFileName: file.name,
+        originalFileName,
         timestamp,
         status: 'finished'
       }
     ])
     setIsUploading(false)
+
+    await fetch(UPLOAD_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...uploadData,
+        fileName,
+        clientFileName: uploadedFileName
+      })
+    })
+
+    onFileStatusChanged();
   }
 
   return (
@@ -228,8 +254,6 @@ export default function LargeFileUploadComponent({
         </div>
         <span>Upload to the database</span>
       </button>
-
-      {isUploading ? <p>Uploading...</p> : null}
     </div>
   )
 }
