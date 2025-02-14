@@ -25,6 +25,10 @@ export const LargeFileUpload = () => {
     name: 'uploadFiles',
     initialValue: []
   })
+  const [dbUploadingFiles] = Retool.useStateArray({
+    name: 'Uploading files from db',
+    initialValue: []
+  })
 
   const [uploadData, setUploadData] = Retool.useStateObject({
     name: 'Upload data'
@@ -32,7 +36,9 @@ export const LargeFileUpload = () => {
 
   const onUpload = Retool.useEventCallback({ name: 'onUpload' })
   const onSubmit = Retool.useEventCallback({ name: 'onSubmit' })
-  const onFileStatusChanged = Retool.useEventCallback({ name: 'onFileStatusChanged' })
+  const onFileStatusChanged = Retool.useEventCallback({
+    name: 'onFileStatusChanged'
+  })
 
   useEffect(() => {
     onUpload()
@@ -41,6 +47,7 @@ export const LargeFileUpload = () => {
   return (
     <LargeFileUploadComponent
       uploadedFileName={uploadedFileName}
+      dbUploadingFiles={dbUploadingFiles}
       fileName={name}
       uploadData={uploadData}
       onSubmit={onSubmit}
@@ -128,6 +135,8 @@ export const PdfConverter = () => {
       const processedHtml = processHtmlContent(`  <div class="container">
         <h1>Invoice</h1>
         <div class=" row-info">
+            <p class="invoice-number">Account Number</p>
+            <p class="invoice-number">${data.accountId}</p>
             <p class="invoice-number">Invoice number</p>
             <p class="invoice-number">${data.invoiceId}</p>
             <p class="date-info">Date Due</p>
@@ -137,6 +146,7 @@ export const PdfConverter = () => {
             <div>
                 <p class=" block-info-title">Company</p>
                 <p class=" block-info-description">${data.clientName}</p>
+                ${data.card || data.ip || data.tracking ? `<p style="margin-top: 30px" class=" block-info-title">Transaction Details</p>` : ''}
                 ${data.card ? `<p class=" block-info-description">Last 4 - ${data.card}</p>` : ''}
                 ${data.ip ? `<p class=" block-info-description">IP: ${data.ip}</p>` : ''}
                 ${data.tracking ? `<p class=" block-info-description">Tracking #: ${data.tracking}</p>` : ''}
@@ -144,9 +154,9 @@ export const PdfConverter = () => {
             <div>
                 <p class=" block-info-title">Bill to</p>
                 <p class=" block-info-description">${data.customerName}</p>
-                <p class=" block-info-description">${data.address}</p>
-                <p class=" block-info-description">${data.city}</p>
-                ${data.phone ? `<p class=" block-info-description">${data.phone}</p>` : ''}
+                <p class=" block-info-description">${data.address1}</p>
+                <p class=" block-info-description">${data.city}, ${data.state} ${data.zip}</p>
+                ${data.phone ? `<p class=" block-info-description">Tel: ${data.phone}</p>` : ''}
                 ${data.email ? `<p class=" block-info-description">${data.email}</p>` : ''}
             </div>
         </div>
@@ -270,6 +280,7 @@ export const PdfConverter = () => {
 
         .block-info-title {
             font-weight: 600;
+            margin-bottom: 4px;
         }
 
         .block-info-description {

@@ -5,10 +5,10 @@
 @tailwind utilities;
 
 .upload-wrapper {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding-top: 15px;
-    padding-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding-top: 15px;
+  padding-bottom: 10px;
 }
 
 .upload-text {
@@ -35,12 +35,26 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #0750f0; /* Blue-700 */
+  }
+
+  &:active {
+    background-color: #0640be; /* Blue-800 */
+  }
 }
 
-.upload-btn:hover {
-  background-color: #0750f0; /* Blue-700 */
-}
+.btn-disabled {
+  pointer-events: none;
+  cursor: default;
 
-.upload-btn:active {
-  background-color: #0640be; /* Blue-800 */
+  background-color: #9eaac4 !important;
+
+  &:hover {
+    background-color: #9eaac4 !important;
+  }
+  &:active {
+    background-color: #9eaac4 !important;
+  }
 }

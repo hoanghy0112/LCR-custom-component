@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react'
 
-const UPLOAD_URL = 'https://uploadfile-deigzpgzma-uc.a.run.app/save-to-db'
+const UPLOAD_URL = 'https://uploadfile-v2-deigzpgzma-uc.a.run.app/save-to-db'
 const GET_SIGNED_URL =
-  'https://uploadfile-deigzpgzma-uc.a.run.app/get-signed-url'
+  'https://uploadfile-v2-deigzpgzma-uc.a.run.app/get-signed-url'
 // const UPLOAD_URL = 'https://netpartnerservices.retool.com/url/test'
 
 // Function to read first N lines of a CSV file
@@ -71,11 +71,37 @@ async function readCSVPreview(file, numLines = 100) {
     return {
       headers,
       data,
-      totalRows: data.length
+      totalRows: (await countCsvRowsStream(file)) - 1
     }
   } finally {
     reader.releaseLock()
   }
+}
+
+async function countCsvRowsStream(file) {
+  let rowCount = 0
+  let remainder = ''
+  const decoder = new TextDecoder()
+  const stream = file.stream()
+  const reader = stream.getReader()
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    // Decode chunk and add any remainder from previous chunk
+    const chunk = remainder + decoder.decode(value, { stream: true })
+    const lines = chunk.split(/\r\n|\r|\n/)
+    // Save the last line in case it's incomplete
+    remainder = lines.pop()
+    rowCount += lines.length
+  }
+
+  // If there's any remainder left, count it as a row
+  if (remainder.length > 0) {
+    rowCount++
+  }
+
+  return rowCount
 }
 
 function formatFileSize(bytes, decimals = 2) {
@@ -90,6 +116,7 @@ function formatFileSize(bytes, decimals = 2) {
 
 export default function LargeFileUploadComponent({
   setData,
+  dbUploadingFiles,
   setFileName,
   fileName,
   uploadedFileName,
@@ -100,6 +127,7 @@ export default function LargeFileUploadComponent({
   uploadData
 }: {
   fileName: string
+  dbUploadingFiles: any
   setData: any
   setFileName: any
   uploadedFileName: string
@@ -115,6 +143,9 @@ export default function LargeFileUploadComponent({
 
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const isDisabled = !file;
+  // const isDisabled = isUploading || dbUploadingFiles.length >= 2
+
   useEffect(() => {
     setUploadingFiles(_uploadingFiles)
     onFileStatusChanged()
@@ -123,6 +154,10 @@ export default function LargeFileUploadComponent({
   const handleUpload = async () => {
     if (!file) {
       alert('Please select a file first!')
+      return
+    }
+    if (!uploadData.clientId) {
+      alert('Please select a client first!')
       return
     }
     setIsUploading(true)
@@ -153,6 +188,7 @@ export default function LargeFileUploadComponent({
         status: 'uploading'
       }
     ])
+    setIsUploading(false)
 
     const uploadResponse = await fetch(url, {
       method: 'PUT',
@@ -160,23 +196,17 @@ export default function LargeFileUploadComponent({
       headers: { 'Content-Type': 'application/octet-stream' }
     })
 
-    if (uploadResponse.ok) {
-      console.log('Upload successful!')
-    } else {
-      console.error('Upload failed')
-    }
     _setUploadingFiles((prev: any) => [
       ...prev.filter((d: any) => d.fileName !== currentFileName),
       {
         fileName: currentFileName,
         originalFileName,
         timestamp,
-        status: 'finished'
+        status: uploadResponse.ok ? 'finished' : 'upload-error'
       }
     ])
-    setIsUploading(false)
 
-    await fetch(UPLOAD_URL, {
+    const savingToDbResponse = await fetch(UPLOAD_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -188,7 +218,17 @@ export default function LargeFileUploadComponent({
       })
     })
 
-    onFileStatusChanged();
+    _setUploadingFiles((prev: any) => [
+      ...prev.filter((d: any) => d.fileName !== currentFileName),
+      {
+        fileName: currentFileName,
+        originalFileName,
+        timestamp,
+        status: savingToDbResponse.ok ? 'saved' : 'saving-error'
+      }
+    ])
+
+    onFileStatusChanged()
   }
 
   return (
@@ -231,7 +271,11 @@ export default function LargeFileUploadComponent({
         }}
         accept=".csv"
       />
-      <button onClick={handleUpload} className="upload-btn">
+      <button
+        onClick={handleUpload}
+        className={`upload-btn ${isDisabled ? 'btn-disabled' : ''}`}
+        disabled={isDisabled}
+      >
         <div className=" w-[20px] h-[20px]">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <path
