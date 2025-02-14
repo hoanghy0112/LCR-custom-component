@@ -143,8 +143,7 @@ export default function LargeFileUploadComponent({
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const isDisabled = !file;
-  // const isDisabled = isUploading || dbUploadingFiles.length >= 2
+  const isDisabled = !file || isUploading || dbUploadingFiles.length >= 3
 
   useEffect(() => {
     setUploadingFiles(_uploadingFiles)
@@ -177,6 +176,7 @@ export default function LargeFileUploadComponent({
     onSubmit()
     setData({})
     setFileName('')
+    setFile(undefined);
     if (inputRef.current) inputRef.current.value = ''
 
     _setUploadingFiles((prev: any) => [
