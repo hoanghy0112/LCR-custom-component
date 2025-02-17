@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react'
 
-const UPLOAD_URL = 'https://uploadfile-v2-deigzpgzma-uc.a.run.app/save-to-db'
+const UPLOAD_URL = 'https://uploadfile-h2ijf5nwua-uc.a.run.app/save-to-db'
 const GET_SIGNED_URL =
-  'https://uploadfile-v2-deigzpgzma-uc.a.run.app/get-signed-url'
+  'https://uploadfile-h2ijf5nwua-uc.a.run.app/get-signed-url'
 // const UPLOAD_URL = 'https://netpartnerservices.retool.com/url/test'
 
 // Function to read first N lines of a CSV file
@@ -163,10 +163,11 @@ export default function LargeFileUploadComponent({
     }
     setIsUploading(true)
 
-    const response = await fetch(`${GET_SIGNED_URL}?fileName=${file.name}`)
+    const response = await fetch(`${GET_SIGNED_URL}?fileName=${uploadedFileName}.csv`)
 
     if (!response.ok) {
       onUploadFail();
+      setIsUploading(false);
     }
 
     const { url, fileName } = await response.json()
