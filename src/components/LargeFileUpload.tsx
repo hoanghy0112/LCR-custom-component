@@ -121,6 +121,7 @@ export default function LargeFileUploadComponent({
   fileName,
   uploadedFileName,
   onSubmit,
+  onUploadFail,
   onFileStatusChanged,
   uploadingFiles,
   setUploadingFiles,
@@ -132,6 +133,7 @@ export default function LargeFileUploadComponent({
   setFileName: any
   uploadedFileName: string
   onSubmit: any
+  onUploadFail: any
   onFileStatusChanged: any
   uploadingFiles: any[]
   setUploadingFiles: any
@@ -162,6 +164,11 @@ export default function LargeFileUploadComponent({
     setIsUploading(true)
 
     const response = await fetch(`${GET_SIGNED_URL}?fileName=${file.name}`)
+
+    if (!response.ok) {
+      onUploadFail();
+    }
+
     const { url, fileName } = await response.json()
 
     const uploadedFile = new File([file], fileName, {
@@ -176,7 +183,7 @@ export default function LargeFileUploadComponent({
     onSubmit()
     setData({})
     setFileName('')
-    setFile(undefined);
+    setFile(undefined)
     if (inputRef.current) inputRef.current.value = ''
 
     _setUploadingFiles((prev: any) => [
@@ -195,6 +202,10 @@ export default function LargeFileUploadComponent({
       body: uploadedFile,
       headers: { 'Content-Type': 'application/octet-stream' }
     })
+
+    if (!uploadResponse.ok) {
+      onUploadFail();
+    }
 
     _setUploadingFiles((prev: any) => [
       ...prev.filter((d: any) => d.fileName !== currentFileName),
@@ -257,7 +268,7 @@ export default function LargeFileUploadComponent({
           </svg>
         </div>
         <p className=" upload-text">
-          {fileName || 'Select .csv file to upload'}
+          {file?.name || 'Select .csv file to upload'}
         </p>
       </div>
       <input
