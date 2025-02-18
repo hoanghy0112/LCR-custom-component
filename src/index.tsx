@@ -29,6 +29,9 @@ export const LargeFileUpload = () => {
     name: 'Uploading files from db',
     initialValue: []
   })
+  const [emailReceiver] = Retool.useStateString({
+    name: 'Email receiver',
+  })
 
   const [uploadData, setUploadData] = Retool.useStateObject({
     name: 'Upload data'
@@ -51,6 +54,7 @@ export const LargeFileUpload = () => {
       dbUploadingFiles={dbUploadingFiles}
       fileName={name}
       uploadData={uploadData}
+      emailReceiver={emailReceiver}
       onSubmit={onSubmit}
       onUploadFail={onUploadFail}
       onFileStatusChanged={onFileStatusChanged}

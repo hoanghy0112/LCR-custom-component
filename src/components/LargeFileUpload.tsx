@@ -119,6 +119,7 @@ export default function LargeFileUploadComponent({
   dbUploadingFiles,
   setFileName,
   fileName,
+  emailReceiver,
   uploadedFileName,
   onSubmit,
   onUploadFail,
@@ -131,6 +132,7 @@ export default function LargeFileUploadComponent({
   dbUploadingFiles: any
   setData: any
   setFileName: any
+  emailReceiver: string
   uploadedFileName: string
   onSubmit: any
   onUploadFail: any
@@ -163,11 +165,15 @@ export default function LargeFileUploadComponent({
     }
     setIsUploading(true)
 
-    const response = await fetch(`${GET_SIGNED_URL}?fileName=${uploadedFileName}.csv`)
+    const startDate = new Date().getTime()
+
+    const response = await fetch(
+      `${GET_SIGNED_URL}?fileName=${uploadedFileName}.csv`
+    )
 
     if (!response.ok) {
-      onUploadFail();
-      setIsUploading(false);
+      onUploadFail()
+      setIsUploading(false)
     }
 
     const { url, fileName } = await response.json()
@@ -205,7 +211,7 @@ export default function LargeFileUploadComponent({
     })
 
     if (!uploadResponse.ok) {
-      onUploadFail();
+      onUploadFail()
     }
 
     _setUploadingFiles((prev: any) => [
@@ -226,7 +232,10 @@ export default function LargeFileUploadComponent({
       body: JSON.stringify({
         ...uploadData,
         fileName,
-        clientFileName: uploadedFileName
+        clientFileName: uploadedFileName,
+        startDate,
+        receiver: emailReceiver,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
       })
     })
 
@@ -236,7 +245,7 @@ export default function LargeFileUploadComponent({
         fileName: currentFileName,
         originalFileName,
         timestamp,
-        status: savingToDbResponse.ok ? 'saved' : 'saving-error'
+        status: savingToDbResponse.ok ? 'saved' : 'saving-error',
       }
     ])
 
