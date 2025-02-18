@@ -2,6 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 const UPLOAD_URL = 'https://uploadfile-h2ijf5nwua-uc.a.run.app/save-to-db'
+const UPDATE_UPLOADING_STATE_URL =
+  'https://uploadfile-h2ijf5nwua-uc.a.run.app/update-uploading-state'
 const GET_SIGNED_URL =
   'https://uploadfile-h2ijf5nwua-uc.a.run.app/get-signed-url'
 // const UPLOAD_URL = 'https://netpartnerservices.retool.com/url/test'
@@ -165,6 +167,18 @@ export default function LargeFileUploadComponent({
     }
     setIsUploading(true)
 
+    // Update uploading state every 1 minutes
+    const interval = setInterval(() => {
+      fetch(UPDATE_UPLOADING_STATE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientId: uploadData.clientId,
+          fileName: uploadedFileName
+        })
+      })
+    }, 60000 * 1)
+
     const startDate = new Date().getTime()
 
     const response = await fetch(
@@ -174,6 +188,7 @@ export default function LargeFileUploadComponent({
     if (!response.ok) {
       onUploadFail()
       setIsUploading(false)
+      clearInterval(interval)
     }
 
     const { url, fileName } = await response.json()
@@ -212,6 +227,7 @@ export default function LargeFileUploadComponent({
 
     if (!uploadResponse.ok) {
       onUploadFail()
+      clearInterval(interval)
     }
 
     _setUploadingFiles((prev: any) => [
@@ -245,11 +261,12 @@ export default function LargeFileUploadComponent({
         fileName: currentFileName,
         originalFileName,
         timestamp,
-        status: savingToDbResponse.ok ? 'saved' : 'saving-error',
+        status: savingToDbResponse.ok ? 'saved' : 'saving-error'
       }
     ])
 
     onFileStatusChanged()
+    clearInterval(interval)
   }
 
   return (
