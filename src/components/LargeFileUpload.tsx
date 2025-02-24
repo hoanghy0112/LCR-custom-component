@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react'
 
-const UPLOAD_URL = 'https://uploadfile-h2ijf5nwua-uc.a.run.app/save-to-db'
-const UPDATE_UPLOADING_STATE_URL =
-  'https://uploadfile-h2ijf5nwua-uc.a.run.app/update-uploading-state'
-const GET_SIGNED_URL =
-  'https://uploadfile-h2ijf5nwua-uc.a.run.app/get-signed-url'
+const BASE_URL =
+  'https://us-central1-valiant-pager-451605-v0.cloudfunctions.net/uploadFile'
+
+const UPLOAD_URL = `${BASE_URL}/save-to-db`
+const UPDATE_UPLOADING_STATE_URL = `${BASE_URL}/update-uploading-state`
+const GET_SIGNED_URL = `${BASE_URL}/get-signed-url`
 // const UPLOAD_URL = 'https://netpartnerservices.retool.com/url/test'
 
 // Function to read first N lines of a CSV file
