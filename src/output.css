@@ -136,6 +136,9 @@
 .bg-\[\#174773\] {
   background-color: #174773;
 }
+.text-center {
+  text-align: center;
+}
 .text-\[12px\] {
   font-size: 12px;
 }
@@ -186,14 +189,18 @@
   transition-timing-function: var(--tw-ease, ease);
   transition-duration: var(--tw-duration, 0s);
 }
+p {
+  font-family: Inter, sans-serif;
+}
 .upload-wrapper {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding-top: 15px;
   padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 .upload-text {
-  font-family: Inter, sans-serif;
   font-weight: 500;
   font-size: 12px;
   text-align: center;
@@ -203,7 +210,7 @@
   font-size: 12px;
   display: flex;
   margin: 0 auto;
-  margin-top: 30px !important;
+  margin-top: 10px !important;
   height: auto;
   align-items: center;
   gap: 8px;
@@ -215,12 +222,23 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  &:hover {
+    background-color: #0750f0;
+  }
+  &:active {
+    background-color: #0640be;
+  }
 }
-.upload-btn:hover {
-  background-color: #0750f0;
-}
-.upload-btn:active {
-  background-color: #0640be;
+.btn-disabled {
+  pointer-events: none;
+  cursor: default;
+  background-color: #9eaac4 !important;
+  &:hover {
+    background-color: #9eaac4 !important;
+  }
+  &:active {
+    background-color: #9eaac4 !important;
+  }
 }
 @property --tw-rotate-x {
   syntax: "*";

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react'
+import Papa from 'papaparse'
 
 const BASE_URL =
   'https://us-central1-valiant-pager-451605-v0.cloudfunctions.net/uploadFile'
@@ -74,7 +75,7 @@ async function readCSVPreview(file, numLines = 100) {
     return {
       headers,
       data,
-      totalRows: (await countCsvRowsStream(file)) - 1
+      totalRows: await countCsvRowsStream(file)
     }
   } finally {
     reader.releaseLock()
@@ -93,7 +94,7 @@ async function countCsvRowsStream(file) {
     if (done) break
     // Decode chunk and add any remainder from previous chunk
     const chunk = remainder + decoder.decode(value, { stream: true })
-    const lines = chunk.split(/\r\n|\r|\n/)
+    const lines = chunk.split(/\r\n|\r|\n/).filter((line) => line.trim() !== '')
     // Save the last line in case it's incomplete
     remainder = lines.pop()
     rowCount += lines.length
@@ -104,7 +105,7 @@ async function countCsvRowsStream(file) {
     rowCount++
   }
 
-  return rowCount
+  return rowCount - 1
 }
 
 function formatFileSize(bytes, decimals = 2) {
@@ -145,6 +146,7 @@ export default function LargeFileUploadComponent({
   uploadData: any
 }) {
   const [file, setFile] = useState<File>()
+  const [fileRows, setFileRows] = useState<number | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [_uploadingFiles, _setUploadingFiles] = useState<any>([])
 
@@ -158,6 +160,12 @@ export default function LargeFileUploadComponent({
     onFileStatusChanged()
   }, [_uploadingFiles])
 
+  useEffect(() => {
+    ;(async () => {
+      setFileRows(await countCsvRowsStream(file))
+    })()
+  }, [file])
+
   const handleUpload = async () => {
     if (!file) {
       alert('Please select a file first!')
@@ -168,6 +176,7 @@ export default function LargeFileUploadComponent({
       return
     }
     setIsUploading(true)
+    setFileRows(null)
 
     // Update uploading state every 1 minutes
     const interval = setInterval(() => {
@@ -296,9 +305,16 @@ export default function LargeFileUploadComponent({
             />
           </svg>
         </div>
-        <p className=" upload-text">
-          {file?.name || 'Select .csv file to upload'}
-        </p>
+        <div>
+          <p className=" upload-text">
+            {file?.name || 'Select .csv file to upload'}
+          </p>
+          {file?.name ? (
+            <p className=" upload-text" style={{ marginTop: 5 }}>
+              {fileRows ? `(${fileRows} rows)` : 'Calculating...'}
+            </p>
+          ) : null}
+        </div>
       </div>
       <input
         ref={inputRef}
