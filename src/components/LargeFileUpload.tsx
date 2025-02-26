@@ -161,6 +161,7 @@ export default function LargeFileUploadComponent({
   }, [_uploadingFiles])
 
   useEffect(() => {
+    setFileRows(null)
     ;(async () => {
       setFileRows(await countCsvRowsStream(file))
     })()
@@ -176,7 +177,6 @@ export default function LargeFileUploadComponent({
       return
     }
     setIsUploading(true)
-    setFileRows(null)
 
     // Update uploading state every 1 minutes
     const interval = setInterval(() => {
