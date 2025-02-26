@@ -150,7 +150,8 @@ export default function LargeFileUploadComponent({
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const isDisabled = !file || isUploading || dbUploadingFiles.length >= 3
+  // const isDisabled = !file || isUploading || dbUploadingFiles.length >= 3
+  const isDisabled = !file || isUploading
 
   useEffect(() => {
     setUploadingFiles(_uploadingFiles)
