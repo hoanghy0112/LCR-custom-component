@@ -227,9 +227,9 @@ export default function LargeFileUploadComponent({
       headers: { 'Content-Type': 'application/octet-stream' }
     })
 
+    clearInterval(interval)
     if (!uploadResponse.ok) {
       onUploadFail()
-      clearInterval(interval)
     }
 
     _setUploadingFiles((prev: any) => [
