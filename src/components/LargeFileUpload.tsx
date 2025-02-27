@@ -83,6 +83,8 @@ async function readCSVPreview(file, numLines = 100) {
 }
 
 async function countCsvRowsStream(file) {
+  if (!file) return null;
+  
   let rowCount = 0
   let remainder = ''
   const decoder = new TextDecoder()
